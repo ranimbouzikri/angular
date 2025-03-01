@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Residence } from 'src/app/core/models/residence.model';
+import { ResidenceService } from 'src/app/services/residence.service';
 
 @Component({
   selector: 'app-add-residence-component',
@@ -8,8 +10,9 @@ import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 })
 export class AddResidenceComponent implements OnInit {
   residenceForm!: FormGroup;
+  imagePreview: string | null = null;
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder, private residenceService: ResidenceService) {}
 
   ngOnInit() {
     this.residenceForm = this.fb.group({
@@ -18,12 +21,29 @@ export class AddResidenceComponent implements OnInit {
       address: ['', Validators.required],
       image: ['', [Validators.required, Validators.pattern('https?://.+')]],
       status: ['Disponible'],
-      apartments: this.fb.array([]),
     });
   }
+
   onSubmit() {
-    if (this.residenceForm.valid) {
-      console.log(this.residenceForm.value);
+    if (this.residenceForm.invalid) {
+      return;
     }
+
+    const newResidence: Residence = {
+      id: Math.floor(Math.random() * 1000), // ✅ ID temporaire
+      name: this.residenceForm.get('name')?.value,
+      address: this.residenceForm.get('address')?.value,
+      status: this.residenceForm.get('status')?.value,
+      image: this.residenceForm.get('image')?.value,
+    };
+
+    // ✅ Ajoute dans le service
+    this.residenceService.addResidence(newResidence);
+
+    console.log('Nouvelle résidence ajoutée :', newResidence);
+
+    // Réinitialise le formulaire
+    this.residenceForm.reset();
+    this.imagePreview = null;
   }
 }

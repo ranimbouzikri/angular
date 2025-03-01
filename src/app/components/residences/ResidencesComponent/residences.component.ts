@@ -1,23 +1,34 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Residence } from 'src/app/core/models/residence.model';
+import { ResidenceService } from 'src/app/services/residence.service';
+import { CommonService } from 'src/app/core/Services/common.service';
 
 @Component({
   selector: 'app-residences',
   templateUrl: './residences.component.html',
   styleUrls: ['./residences.component.css']
 })
-export class ResidencesComponent {
+export class ResidencesComponent implements OnInit {
   searchText: string = '';
-
-
-  listResidences: Residence[] = [
-    { id: 1, name: "El Fel", address: "Borj Cedria", image: "../../assets/images/R1.jpeg", status: "Disponible" },
-    { id: 2, name: "El Yasmine", address: "Ezzahra", image: "../../assets/images/R1.jpeg", status: "Disponible" },
-    { id: 3, name: "El Arij", address: "Rades", image: "../../assets/images/R2.jpg", status: "Vendu" },
-    { id: 4, name: "El Anber", address: "inconnu", image: "../../assets/images/R3.jpg", status: "En Construction" }
-  ];
-
+  listResidences: Residence[] = [];
   listResidencesFav: Residence[] = [];
+  similarAddressCounts: { [address: string]: number } = {}; // Stocke les comptes pour chaque adresse
+
+  constructor(
+    private residenceService: ResidenceService,
+    private commonService: CommonService // Inject CommonService
+  ) {}
+
+  ngOnInit() {
+    this.loadResidences();
+  }
+
+  loadResidences() {
+    this.residenceService.getResidences().subscribe(residences => {
+      console.log("Résidences récupérées :", residences); // Vérifier les données
+      this.listResidences = residences;
+    });
+  }
 
   showLocation(address: string) {
     if (address.toLowerCase() === 'inconnu') {
@@ -30,6 +41,15 @@ export class ResidencesComponent {
   addToFavorites(residence: Residence) {
     if (!this.listResidencesFav.find(fav => fav.id === residence.id)) {
       this.listResidencesFav.push(residence);
+    }
   }
-}
+
+
+  getSimilarAddresses(address: string): void {
+    const count = this.listResidences.filter(residence => residence.address.trim().toLowerCase() === address.trim().toLowerCase()).length;
+  
+    this.similarAddressCounts[address] = count;
+  
+    console.log(`Résidences trouvées avec l'adresse "${address}":`, count);
+  }
 }

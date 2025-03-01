@@ -25,7 +25,11 @@
       <button (click)="showLocation(item.address)">Show Location</button>
       <button (click)="addToFavorites(item)">Like ❤️</button>
       <button [routerLink]="['/residences', item.id, 'apartments']" class="btn btn-dark btn-sm mt-2">Apartments List</button>
+      
+      <button (click)="getSimilarAddresses(item.address)">Check Similar Addresses</button>
+      <p *ngIf="similarAddressCounts[item.address]">Similar Residences: {{ similarAddressCounts[item.address] }}</p>
 
+    </div>
 
     </div>
     <h2>Favorites</h2>
@@ -46,7 +50,9 @@
         </div>
       </div>
       <button (click)="showLocation(item.address)">Show Location</button>
-
+     
+      
+      
     </div>
-  </div>
+  
   
