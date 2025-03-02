@@ -28,7 +28,9 @@
       
       <button (click)="getSimilarAddresses(item.address)">Check Similar Addresses</button>
       <p *ngIf="similarAddressCounts[item.address]">Similar Residences: {{ similarAddressCounts[item.address] }}</p>
-
+      <button (click)="deleteResidence(item.id)" class="btn btn-sm btn-danger">
+        <i class="bi bi-trash"></i> Supprimer
+      </button>
     </div>
 
     </div>

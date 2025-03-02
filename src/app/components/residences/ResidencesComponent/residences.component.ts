@@ -3,6 +3,7 @@ import { Residence } from 'src/app/core/models/residence.model';
 import { ResidenceService } from 'src/app/services/residence.service';
 import { CommonService } from 'src/app/core/Services/common.service';
 
+
 @Component({
   selector: 'app-residences',
   templateUrl: './residences.component.html',
@@ -52,4 +53,11 @@ export class ResidencesComponent implements OnInit {
   
     console.log(`Résidences trouvées avec l'adresse "${address}":`, count);
   }
+  deleteResidence(id: number) {
+    this.residenceService.getResidences(id).subscribe(() => {
+      this.listResidences = this.listResidences.filter(res => res.id !== id);
+    });
+  }
+  
+  
 }

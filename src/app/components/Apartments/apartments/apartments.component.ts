@@ -1,10 +1,14 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { CommonService } from 'src/app/core/Services/common.service';
+import { HttpClient } from '@angular/common/http';
+
 
 @Component({
   selector: 'app-apartments',
   templateUrl: './apartments.component.html',
   styleUrls: ['./apartments.component.css']
+  
 })
 export class ApartmentsComponent {
   apartments = [
@@ -13,10 +17,29 @@ export class ApartmentsComponent {
     { apartNum: 201, floorNum: 2, surface: 110, terrace: true, surfaceterrace: 12, category: "Premium", residenceId: 2 },
     { apartNum: 301, floorNum: 3, surface: 90, terrace: false, surfaceterrace: 0, category: "Standard", residenceId: 3 },
   ];
+  constructor(private router: Router, private commonService: CommonService, private http: HttpClient) {}
+  listResidences: any[] = [];
 
-  constructor(private router: Router) {}
+    
+
+  private residenceUrl = 'http://localhost:3000/residences';
 
   navigateToAddApartment() {
     this.router.navigate(['/apartments/add']);
   }
-}
+  countSameSurface(surface: number): number {
+    return this.commonService.getSameValueOf(this.apartments, 'surface', surface);
+  }
+  deleteApartmentsByResidence(residenceId: number) {
+    this.http.get<any[]>(`http://localhost:3000/apartments?residenceId=${residenceId}`).subscribe(apartments => {
+      apartments.forEach(apartment => {
+        this.http.delete(`http://localhost:3000/apartments/${apartment.apartNum}`).subscribe(() => {
+          this.apartments = this.apartments.filter(apart => apart.apartNum !== apartment.apartNum);
+        });
+      });
+    });
+  }
+  
+  }
+  
+

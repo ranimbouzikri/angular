@@ -15,7 +15,7 @@ export class ResidenceService {
 
   private residencesSubject = new BehaviorSubject<Residence[]>(this.residences);
   
-  getResidences(): Observable<Residence[]> {
+  getResidences(id: number): Observable<Residence[]> {
     return this.residencesSubject.asObservable();
   }
 
